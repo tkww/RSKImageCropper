@@ -337,6 +337,24 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  */
 - (CGRect)imageCropViewControllerCustomMovementRect:(RSKImageCropViewController *)controller;
 
+/**
+ Asks the data source a custom path for the TEST mask.
+
+ @param controller The crop view controller object to whom a path is provided.
+
+ @return A custom path for the TEST mask.
+ */
+
+
+/**
+ Asks the data source for a path for an optional supplemental view mask.
+
+ @param controller The crop view controller object to whom a path is provided.
+
+ @return A custom path for the mask.
+ */
+- (UIBezierPath *)imageCropViewControllerSupplementalViewMaskPath:(RSKImageCropViewController *)controller;
+
 @end
 
 /**

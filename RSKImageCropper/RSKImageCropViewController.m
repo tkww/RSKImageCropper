@@ -42,7 +42,10 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 
 @property (strong, nonatomic) RSKImageScrollView *imageScrollView;
 @property (strong, nonatomic) RSKTouchView *overlayView;
+@property (strong, nonatomic) RSKTouchView *supplementalView;
 @property (strong, nonatomic) CAShapeLayer *maskLayer;
+@property (strong, nonatomic) CAShapeLayer *supplementalMaskLayer;
+
 
 @property (assign, nonatomic) CGRect maskRect;
 @property (copy, nonatomic) UIBezierPath *maskPath;
@@ -149,6 +152,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     
     [self.view addSubview:self.imageScrollView];
     [self.view addSubview:self.overlayView];
+    [self.view addSubview:self.supplementalView];
     [self.view addSubview:self.titleLabel];
     [self.view addSubview:self.cancelButton];
     [self.view addSubview:self.chooseButton];
@@ -318,6 +322,16 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     return _overlayView;
 }
 
+- (RSKTouchView *)supplementalView
+{
+    if (!_supplementalView) {
+        _supplementalView = [[RSKTouchView alloc] init];
+        _supplementalView.receiver = self.imageScrollView;
+        [_supplementalView.layer addSublayer:self.supplementalMaskLayer];
+    }
+    return _supplementalView;
+}
+
 - (CAShapeLayer *)maskLayer
 {
     if (!_maskLayer) {
@@ -328,6 +342,19 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         _maskLayer.strokeColor = self.maskLayerStrokeColor.CGColor;
     }
     return _maskLayer;
+}
+
+- (CAShapeLayer *)supplementalMaskLayer
+{
+    if (!_supplementalMaskLayer) {
+        _supplementalMaskLayer = [CAShapeLayer layer];
+        _supplementalMaskLayer.fillRule = kCAFillRuleEvenOdd;
+        _supplementalMaskLayer.fillColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.2f].CGColor;
+        _supplementalMaskLayer.lineWidth = self.maskLayerLineWidth;
+        //        _testLayer.strokeColor = self.maskLayerStrokeColor.CGColor;
+        _supplementalMaskLayer.strokeColor = UIColor.whiteColor.CGColor;
+    }
+    return _supplementalMaskLayer;
 }
 
 - (UIColor *)maskLayerColor
@@ -593,8 +620,17 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         pathAnimation.duration = [CATransaction animationDuration];
         pathAnimation.timingFunction = [CATransaction animationTimingFunction];
         [self.maskLayer addAnimation:pathAnimation forKey:@"path"];
-        
+
         self.maskLayer.path = [clipPath CGPath];
+
+
+        if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewMaskPath:)]) {
+            UIBezierPath *supplementalMaskPath = [self.dataSource imageCropViewControllerSupplementalViewMaskPath:self];
+            UIBezierPath *supplementalClipPath = [UIBezierPath bezierPathWithRect:self.rectForClipPath];
+            [supplementalClipPath appendPath:supplementalMaskPath];
+            supplementalClipPath.usesEvenOddFillRule = YES;
+            self.supplementalMaskLayer.path = [supplementalClipPath CGPath];
+        }
     }
 }
 
@@ -860,6 +896,12 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 {
     CGRect frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds) * 2, CGRectGetHeight(self.view.bounds) * 2);
     self.overlayView.frame = frame;
+}
+
+- (void)layoutTestCustomView
+{
+    CGRect frame = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds) * 2, CGRectGetHeight(self.view.bounds) * 2);
+    self.supplementalView.frame = frame;
 }
 
 - (void)updateMaskRect
