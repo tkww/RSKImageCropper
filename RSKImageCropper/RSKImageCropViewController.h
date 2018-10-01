@@ -194,10 +194,18 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  */
 @property (strong, nonatomic, readonly) UIButton *cancelButton;
 
+@property (strong, nonatomic, nullable) UIColor *cancelButtonTextColor;
+
+@property (strong, nonatomic, nullable) UIFont *cancelButtonFont;
+
 /**
  The Choose Button.
  */
 @property (strong, nonatomic, readonly) UIButton *chooseButton;
+
+@property (strong, nonatomic, nullable) UIColor *chooseButtonTextColor;
+
+@property (strong, nonatomic, nullable) UIFont *chooseButtonFont;
 
 ///--------------------------
 /// @name Modifying the UI
