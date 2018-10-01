@@ -187,7 +187,7 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
 /**
  The Title Label.
  */
-@property (strong, nonatomic, readonly) UILabel *moveAndScaleLabel;
+@property (strong, nonatomic, readonly) UILabel *titleLabel;
 
 /**
  The Cancel Button.
@@ -198,6 +198,25 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  The Choose Button.
  */
 @property (strong, nonatomic, readonly) UIButton *chooseButton;
+
+///--------------------------
+/// @name Modifying the UI
+///--------------------------
+
+/**
+ The text for the top label in the crop view.
+ */
+@property (strong, nonatomic, nullable) NSString *titleLabelText;
+
+/**
+ The color for the top label in the crop view.
+ */
+@property (strong, nonatomic, nullable) UIColor *titleLabelColor;
+
+/**
+ The font for the top label in the crop view.
+ */
+@property (strong, nonatomic, nullable) UIFont *titleLabelFont;
 
 /// -------------------------------------------
 /// @name Checking of the Interface Orientation
@@ -227,7 +246,7 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
 /**
  The vertical space between the top of the 'Move and Scale' label and the top of the crop view in portrait orientation. Default value is `64.0f`.
  */
-@property (assign, nonatomic) CGFloat portraitMoveAndScaleLabelTopAndCropViewTopVerticalSpace;
+@property (assign, nonatomic) CGFloat portraitTitleLabelTopAndCropViewTopVerticalSpace;
 
 /**
  The vertical space between the bottom of the crop view and the bottom of the 'Cancel' button in portrait orientation. Default value is `21.0f`.
@@ -262,7 +281,7 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
 /**
  The vertical space between the top of the 'Move and Scale' label and the top of the crop view in landscape orientation. Default value is `12.0f`.
  */
-@property (assign, nonatomic) CGFloat landscapeMoveAndScaleLabelTopAndCropViewTopVerticalSpace;
+@property (assign, nonatomic) CGFloat landscapeTitleLabelTopAndCropViewTopVerticalSpace;
 
 /**
  The vertical space between the bottom of the crop view and the bottom of the 'Cancel' button in landscape orientation. Default value is `12.0f`.

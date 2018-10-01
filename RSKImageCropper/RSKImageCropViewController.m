@@ -52,7 +52,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 
 @property (readonly, nonatomic) CGRect imageRect;
 
-@property (strong, nonatomic) UILabel *moveAndScaleLabel;
+@property (strong, nonatomic) UILabel *titleLabel;
 @property (strong, nonatomic) UIButton *cancelButton;
 @property (strong, nonatomic) UIButton *chooseButton;
 
@@ -60,7 +60,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 @property (strong, nonatomic) UIRotationGestureRecognizer *rotationGestureRecognizer;
 
 @property (assign, nonatomic) BOOL didSetupConstraints;
-@property (strong, nonatomic) NSLayoutConstraint *moveAndScaleLabelTopConstraint;
+@property (strong, nonatomic) NSLayoutConstraint *titleLabelTopConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *cancelButtonBottomConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *cancelButtonLeadingConstraint;
 @property (strong, nonatomic) NSLayoutConstraint *chooseButtonBottomConstraint;
@@ -86,7 +86,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         
         _portraitCircleMaskRectInnerEdgeInset = 15.0f;
         _portraitSquareMaskRectInnerEdgeInset = 20.0f;
-        _portraitMoveAndScaleLabelTopAndCropViewTopVerticalSpace = 64.0f;
+        _portraitTitleLabelTopAndCropViewTopVerticalSpace = 64.0f;
         _portraitCropViewBottomAndCancelButtonBottomVerticalSpace = 21.0f;
         _portraitCropViewBottomAndChooseButtonBottomVerticalSpace = 21.0f;
         _portraitCancelButtonLeadingAndCropViewLeadingHorizontalSpace = 13.0f;
@@ -94,7 +94,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         
         _landscapeCircleMaskRectInnerEdgeInset = 45.0f;
         _landscapeSquareMaskRectInnerEdgeInset = 45.0f;
-        _landscapeMoveAndScaleLabelTopAndCropViewTopVerticalSpace = 12.0f;
+        _landscapeTitleLabelTopAndCropViewTopVerticalSpace = 12.0f;
         _landscapeCropViewBottomAndCancelButtonBottomVerticalSpace = 12.0f;
         _landscapeCropViewBottomAndChooseButtonBottomVerticalSpace = 12.0f;
         _landscapeCancelButtonLeadingAndCropViewLeadingHorizontalSpace = 13.0;
@@ -149,7 +149,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     
     [self.view addSubview:self.imageScrollView];
     [self.view addSubview:self.overlayView];
-    [self.view addSubview:self.moveAndScaleLabel];
+    [self.view addSubview:self.titleLabel];
     [self.view addSubview:self.cancelButton];
     [self.view addSubview:self.chooseButton];
     
@@ -233,16 +233,16 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         // The label "Move and Scale".
         // ---------------------------
         
-        NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.moveAndScaleLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual
+        NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual
                                                                          toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0f
                                                                        constant:0.0f];
         [self.view addConstraint:constraint];
         
-        CGFloat constant = self.portraitMoveAndScaleLabelTopAndCropViewTopVerticalSpace;
-        self.moveAndScaleLabelTopConstraint = [NSLayoutConstraint constraintWithItem:self.moveAndScaleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual
+        CGFloat constant = self.portraitTitleLabelTopAndCropViewTopVerticalSpace;
+        self.titleLabelTopConstraint = [NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual
                                                                               toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0f
                                                                             constant:constant];
-        [self.view addConstraint:self.moveAndScaleLabelTopConstraint];
+        [self.view addConstraint:self.titleLabelTopConstraint];
         
         // --------------------
         // The button "Cancel".
@@ -279,13 +279,13 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         self.didSetupConstraints = YES;
     } else {
         if ([self isPortraitInterfaceOrientation]) {
-            self.moveAndScaleLabelTopConstraint.constant = self.portraitMoveAndScaleLabelTopAndCropViewTopVerticalSpace;
+            self.titleLabelTopConstraint.constant = self.portraitTitleLabelTopAndCropViewTopVerticalSpace;
             self.cancelButtonBottomConstraint.constant = self.portraitCropViewBottomAndCancelButtonBottomVerticalSpace;
             self.cancelButtonLeadingConstraint.constant = self.portraitCancelButtonLeadingAndCropViewLeadingHorizontalSpace;
             self.chooseButtonBottomConstraint.constant = self.portraitCropViewBottomAndChooseButtonBottomVerticalSpace;
             self.chooseButtonTrailingConstraint.constant = self.portraitCropViewTrailingAndChooseButtonTrailingHorizontalSpace;
         } else {
-            self.moveAndScaleLabelTopConstraint.constant = self.landscapeMoveAndScaleLabelTopAndCropViewTopVerticalSpace;
+            self.titleLabelTopConstraint.constant = self.landscapeTitleLabelTopAndCropViewTopVerticalSpace;
             self.cancelButtonBottomConstraint.constant = self.landscapeCropViewBottomAndCancelButtonBottomVerticalSpace;
             self.cancelButtonLeadingConstraint.constant = self.landscapeCancelButtonLeadingAndCropViewLeadingHorizontalSpace;
             self.chooseButtonBottomConstraint.constant = self.landscapeCropViewBottomAndChooseButtonBottomVerticalSpace;
@@ -338,17 +338,27 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     return _maskLayerColor;
 }
 
-- (UILabel *)moveAndScaleLabel
+- (UILabel *)titleLabel
 {
-    if (!_moveAndScaleLabel) {
-        _moveAndScaleLabel = [[UILabel alloc] init];
-        _moveAndScaleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        _moveAndScaleLabel.backgroundColor = [UIColor clearColor];
-        _moveAndScaleLabel.text = RSKLocalizedString(@"Move and Scale", @"Move and Scale label");
-        _moveAndScaleLabel.textColor = [UIColor whiteColor];
-        _moveAndScaleLabel.opaque = NO;
+    if (!_titleLabel) {
+        _titleLabel = [[UILabel alloc] init];
+        _titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        _titleLabel.backgroundColor = [UIColor clearColor];
+        _titleLabel.text = RSKLocalizedString(@"Move and Scale", @"Move and Scale label");
+        if(_titleLabelText) {
+            _titleLabel.text = _titleLabelText;
+        }
+        _titleLabel.textColor = [UIColor whiteColor];
+        if(_titleLabelColor) {
+            _titleLabel.textColor = _titleLabelColor;
+        }
+        if(_titleLabelFont) {
+            _titleLabel.font = _titleLabelFont;
+        }
+
+        _titleLabel.opaque = NO;
     }
-    return _moveAndScaleLabel;
+    return _titleLabel;
 }
 
 - (UIButton *)cancelButton
