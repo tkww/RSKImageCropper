@@ -56,6 +56,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 @property (readonly, nonatomic) CGRect imageRect;
 
 @property (strong, nonatomic) UILabel *titleLabel;
+@property (strong, nonatomic) UILabel *subtitleLabel;
 @property (strong, nonatomic) UIButton *cancelButton;
 @property (strong, nonatomic) UIButton *chooseButton;
 
@@ -97,6 +98,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         
         _landscapeCircleMaskRectInnerEdgeInset = 45.0f;
         _landscapeSquareMaskRectInnerEdgeInset = 45.0f;
+        _subtitleTopSpaceToTitleBottom = 4.0f;
         _landscapeTitleLabelTopAndCropViewTopVerticalSpace = 12.0f;
         _landscapeCropViewBottomAndCancelButtonBottomVerticalSpace = 12.0f;
         _landscapeCropViewBottomAndChooseButtonBottomVerticalSpace = 12.0f;
@@ -154,6 +156,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     [self.view addSubview:self.overlayView];
     [self.view addSubview:self.supplementalView];
     [self.view addSubview:self.titleLabel];
+    [self.view addSubview:self.subtitleLabel];
     [self.view addSubview:self.cancelButton];
     [self.view addSubview:self.chooseButton];
     
@@ -247,6 +250,19 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
                                                                               toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0f
                                                                             constant:constant];
         [self.view addConstraint:self.titleLabelTopConstraint];
+
+        // ---------------------------
+        // The "Subtitle" label.
+        // ---------------------------
+
+        NSLayoutConstraint *subtitleLeadingConstraint = [self.subtitleLabel.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:46];
+        [subtitleLeadingConstraint setActive:YES];
+
+        NSLayoutConstraint *subtitleTrailingConstraint = [self.subtitleLabel.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-46];
+        [subtitleTrailingConstraint setActive:YES];
+
+        NSLayoutConstraint *subtitleTopContraintToTitle = [self.subtitleLabel.topAnchor constraintEqualToAnchor:self.titleLabel.bottomAnchor constant:self.subtitleTopSpaceToTitleBottom];
+        [subtitleTopContraintToTitle setActive:YES];
         
         // --------------------
         // The button "Cancel".
@@ -386,6 +402,30 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         _titleLabel.opaque = NO;
     }
     return _titleLabel;
+}
+
+- (UILabel *)subtitleLabel
+{
+    if (!_subtitleLabel) {
+        _subtitleLabel = [[UILabel alloc] init];
+        _subtitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        _subtitleLabel.textAlignment = NSTextAlignmentCenter;
+        _subtitleLabel.text = RSKLocalizedString(@"Move and Scale", @"Move and Scale label");
+        if(_subtitleLabelText) {
+            _subtitleLabel.text = _subtitleLabelText;
+        }
+        _subtitleLabel.textColor = [UIColor whiteColor];
+        if(_subtitleLabelColor) {
+            _subtitleLabel.textColor = _subtitleLabelColor;
+        }
+
+        if(_subtitleLabelFont) {
+            _subtitleLabel.font = _subtitleLabelFont;
+        }
+
+        _subtitleLabel.opaque = NO;
+    }
+    return _subtitleLabel;
 }
 
 - (UIButton *)cancelButton

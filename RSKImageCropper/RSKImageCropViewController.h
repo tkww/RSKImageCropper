@@ -189,6 +189,23 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  */
 @property (strong, nonatomic, readonly) UILabel *titleLabel;
 
+@property (strong, nonatomic, nullable) NSString *titleLabelText;
+
+@property (strong, nonatomic, nullable) UIColor *titleLabelColor;
+
+@property (strong, nonatomic, nullable) UIFont *titleLabelFont;
+
+/**
+ The Subtitle Label.
+ */
+@property (strong, nonatomic, readonly) UILabel *subtitleLabel;
+
+@property (strong, nonatomic, nullable) NSString *subtitleLabelText;
+
+@property (strong, nonatomic, nullable) UIColor *subtitleLabelColor;
+
+@property (strong, nonatomic, nullable) UIFont *subtitleLabelFont;
+
 /**
  The Cancel Button.
  */
@@ -206,25 +223,6 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
 @property (strong, nonatomic, nullable) UIColor *chooseButtonTextColor;
 
 @property (strong, nonatomic, nullable) UIFont *chooseButtonFont;
-
-///--------------------------
-/// @name Modifying the UI
-///--------------------------
-
-/**
- The text for the top label in the crop view.
- */
-@property (strong, nonatomic, nullable) NSString *titleLabelText;
-
-/**
- The color for the top label in the crop view.
- */
-@property (strong, nonatomic, nullable) UIColor *titleLabelColor;
-
-/**
- The font for the top label in the crop view.
- */
-@property (strong, nonatomic, nullable) UIFont *titleLabelFont;
 
 /// -------------------------------------------
 /// @name Checking of the Interface Orientation
@@ -255,6 +253,13 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  The vertical space between the top of the 'Move and Scale' label and the top of the crop view in portrait orientation. Default value is `64.0f`.
  */
 @property (assign, nonatomic) CGFloat portraitTitleLabelTopAndCropViewTopVerticalSpace;
+
+
+/**
+ The vertical space between the top of the Subtitle label and the bottom of the Title label in portrait orientation. Default value is `4.0f`.
+ */
+@property (assign, nonatomic) CGFloat subtitleTopSpaceToTitleBottom;
+
 
 /**
  The vertical space between the bottom of the crop view and the bottom of the 'Cancel' button in portrait orientation. Default value is `21.0f`.
@@ -344,14 +349,6 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  @return A custom rect in which the image can be moved.
  */
 - (CGRect)imageCropViewControllerCustomMovementRect:(RSKImageCropViewController *)controller;
-
-/**
- Asks the data source a custom path for the TEST mask.
-
- @param controller The crop view controller object to whom a path is provided.
-
- @return A custom path for the TEST mask.
- */
 
 
 /**
