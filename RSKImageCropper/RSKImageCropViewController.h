@@ -207,6 +207,28 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
 @property (strong, nonatomic, nullable) UIFont *subtitleLabelFont;
 
 /**
+ The Crop View Label.
+ */
+@property (strong, nonatomic, readonly) UILabel *cropViewLabel;
+
+@property (strong, nonatomic, nullable) NSString *cropViewLabelText;
+
+@property (strong, nonatomic, nullable) UIColor *cropViewLabelColor;
+
+@property (strong, nonatomic, nullable) UIFont *cropViewLabelFont;
+
+/**
+ The Supplemental View Label.
+ */
+@property (strong, nonatomic, readonly) UILabel *supplementalViewLabel;
+
+@property (strong, nonatomic, nullable) NSString *supplementalViewLabelText;
+
+@property (strong, nonatomic, nullable) UIColor *supplementalViewLabelColor;
+
+@property (strong, nonatomic, nullable) UIFont *supplementalViewLabelFont;
+
+/**
  The Cancel Button.
  */
 @property (strong, nonatomic, readonly) UIButton *cancelButton;
@@ -340,6 +362,18 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  @return A custom path for the mask.
  */
 - (UIBezierPath *)imageCropViewControllerCustomMaskPath:(RSKImageCropViewController *)controller;
+
+
+/**
+ Asks the data source for a custom rect for an optional supplemental view that has no influence on cropping.
+
+ @param controller The crop view controller object to whom a rect is provided.
+
+ @return A custom rect for the supplementalView.
+ */
+@optional
+- (CGRect)imageCropViewControllerSupplementalViewRect:(RSKImageCropViewController *)controller;
+
 
 /**
  Asks the data source a custom rect in which the image can be moved.

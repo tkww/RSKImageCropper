@@ -43,6 +43,10 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 @property (strong, nonatomic) RSKImageScrollView *imageScrollView;
 @property (strong, nonatomic) RSKTouchView *overlayView;
 @property (strong, nonatomic) RSKTouchView *supplementalView;
+@property (strong, nonatomic) RSKTouchView *guidelineView;
+@property (strong, nonatomic) RSKTouchView *supplementalGuidelineView;
+@property (strong, nonatomic) UILabel *cropViewLabel;
+@property (strong, nonatomic) UILabel *supplementalViewLabel;
 @property (strong, nonatomic) CAShapeLayer *maskLayer;
 @property (strong, nonatomic) CAShapeLayer *supplementalMaskLayer;
 
@@ -155,8 +159,14 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     [self.view addSubview:self.imageScrollView];
     [self.view addSubview:self.overlayView];
     [self.view addSubview:self.supplementalView];
+    [self.view addSubview:self.guidelineView];
+    if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewRect:)]) {
+        [self.view addSubview:self.supplementalGuidelineView];
+        [self.view addSubview:self.supplementalViewLabel];
+    }
     [self.view addSubview:self.titleLabel];
     [self.view addSubview:self.subtitleLabel];
+    [self.view addSubview:self.cropViewLabel];
     [self.view addSubview:self.cancelButton];
     [self.view addSubview:self.chooseButton];
     
@@ -247,8 +257,8 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         
         CGFloat constant = self.portraitTitleLabelTopAndCropViewTopVerticalSpace;
         self.titleLabelTopConstraint = [NSLayoutConstraint constraintWithItem:self.titleLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual
-                                                                              toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0f
-                                                                            constant:constant];
+                                                                       toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0f
+                                                                     constant:constant];
         [self.view addConstraint:self.titleLabelTopConstraint];
 
         // ---------------------------
@@ -263,6 +273,60 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 
         NSLayoutConstraint *subtitleTopContraintToTitle = [self.subtitleLabel.topAnchor constraintEqualToAnchor:self.titleLabel.bottomAnchor constant:self.subtitleTopSpaceToTitleBottom];
         [subtitleTopContraintToTitle setActive:YES];
+
+        // ---------------------------
+        // The Guideline View
+        // ---------------------------
+
+        self.guidelineView.translatesAutoresizingMaskIntoConstraints = NO;
+        CGRect guidelineRect = [self.dataSource imageCropViewControllerCustomMaskRect:self];
+        NSLayoutConstraint *guidelineViewHeightConstraint = [self.guidelineView.heightAnchor constraintEqualToConstant:guidelineRect.size.height];
+        [guidelineViewHeightConstraint setActive:YES];
+        NSLayoutConstraint *guidelineViewWidthConstraint = [self.guidelineView.widthAnchor constraintEqualToConstant:guidelineRect.size.width];
+        [guidelineViewWidthConstraint setActive:YES];
+        NSLayoutConstraint *guidelineXConstraint = [self.guidelineView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor];
+        [guidelineXConstraint setActive:YES];
+        NSLayoutConstraint *guidelineYConstraint = [self.guidelineView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor];
+        [guidelineYConstraint setActive:YES];
+
+        // ---------------------------
+        // The Supplemental Guideline View
+        // ---------------------------
+
+        if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewRect:)]) {
+            self.supplementalGuidelineView.translatesAutoresizingMaskIntoConstraints = NO;
+            CGRect supplementalGuidelineRect = [self.dataSource imageCropViewControllerSupplementalViewRect:self];
+            NSLayoutConstraint *supplementalGuidelineViewHeightConstraint = [self.supplementalGuidelineView.heightAnchor constraintEqualToConstant:supplementalGuidelineRect.size.height];
+            [supplementalGuidelineViewHeightConstraint setActive:YES];
+            NSLayoutConstraint *supplementalGuidelineViewWidthConstraint = [self.supplementalGuidelineView.widthAnchor constraintEqualToConstant:supplementalGuidelineRect.size.width];
+            [supplementalGuidelineViewWidthConstraint setActive:YES];
+            NSLayoutConstraint *supplementalGuidelineXConstraint = [self.supplementalGuidelineView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor];
+            [supplementalGuidelineXConstraint setActive:YES];
+            NSLayoutConstraint *supplementalGuidelineYConstraint = [self.supplementalGuidelineView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor];
+            [supplementalGuidelineYConstraint setActive:YES];
+        }
+
+        // ---------------------------
+        // The CropView Label
+        // ---------------------------
+
+        self.cropViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        NSLayoutConstraint *cropViewLabelBottomConstraintToGuidelineView = [self.cropViewLabel.bottomAnchor constraintEqualToAnchor:self.guidelineView.topAnchor constant:0];
+        [cropViewLabelBottomConstraintToGuidelineView setActive:YES];
+        NSLayoutConstraint *cropViewLabelLeadingConstraintToGuidelineView = [self.cropViewLabel.leadingAnchor constraintEqualToAnchor:self.guidelineView.leadingAnchor constant:6];
+        [cropViewLabelLeadingConstraintToGuidelineView setActive:YES];
+
+        // ---------------------------
+        // The SupplementalView Label
+        // ---------------------------
+
+        if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewRect:)]) {
+            self.supplementalViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
+            NSLayoutConstraint *supplementalViewLabelBottomConstraintToSupplementalGuidelineView = [self.supplementalViewLabel.bottomAnchor constraintEqualToAnchor:self.supplementalGuidelineView.topAnchor constant:0];
+            [supplementalViewLabelBottomConstraintToSupplementalGuidelineView setActive:YES];
+            NSLayoutConstraint *supplementalViewLabelLeadingConstraintToSupplementalGuidelineView = [self.supplementalViewLabel.leadingAnchor constraintEqualToAnchor:self.supplementalGuidelineView.leadingAnchor constant:6];
+            [supplementalViewLabelLeadingConstraintToSupplementalGuidelineView setActive:YES];
+        }
         
         // --------------------
         // The button "Cancel".
@@ -348,6 +412,31 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     return _supplementalView;
 }
 
+- (RSKTouchView *)guidelineView
+{
+    if (!_guidelineView) {
+        _guidelineView = [[RSKTouchView alloc] init];
+        _guidelineView.receiver = self.imageScrollView;
+        _guidelineView.backgroundColor = [UIColor clearColor];
+        _guidelineView.layer.borderColor = [[UIColor whiteColor] CGColor];
+        _guidelineView.layer.borderWidth = 1.0;
+    }
+    return _guidelineView;
+}
+
+- (RSKTouchView *)supplementalGuidelineView
+{
+    if (!_supplementalGuidelineView) {
+        _supplementalGuidelineView = [[RSKTouchView alloc] init];
+        _supplementalGuidelineView.receiver = self.imageScrollView;
+        _supplementalGuidelineView.backgroundColor = [UIColor clearColor];
+        _supplementalGuidelineView.layer.borderColor = [UIColor colorWithRed:1.0f green:0.0f blue:0.0f alpha:0.9f].CGColor;
+
+        _supplementalGuidelineView.layer.borderWidth = 0.5;
+    }
+    return _supplementalGuidelineView;
+}
+
 - (CAShapeLayer *)maskLayer
 {
     if (!_maskLayer) {
@@ -367,8 +456,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         _supplementalMaskLayer.fillRule = kCAFillRuleEvenOdd;
         _supplementalMaskLayer.fillColor = [UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.2f].CGColor;
         _supplementalMaskLayer.lineWidth = self.maskLayerLineWidth;
-        //        _testLayer.strokeColor = self.maskLayerStrokeColor.CGColor;
-        _supplementalMaskLayer.strokeColor = UIColor.whiteColor.CGColor;
+        _supplementalMaskLayer.strokeColor = self.maskLayerStrokeColor.CGColor;
     }
     return _supplementalMaskLayer;
 }
@@ -410,6 +498,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         _subtitleLabel = [[UILabel alloc] init];
         _subtitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
         _subtitleLabel.textAlignment = NSTextAlignmentCenter;
+        _subtitleLabel.numberOfLines = 0;
         _subtitleLabel.text = RSKLocalizedString(@"Move and Scale", @"Move and Scale label");
         if(_subtitleLabelText) {
             _subtitleLabel.text = _subtitleLabelText;
@@ -426,6 +515,52 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         _subtitleLabel.opaque = NO;
     }
     return _subtitleLabel;
+}
+
+- (UILabel *)cropViewLabel
+{
+    if (!_cropViewLabel) {
+        _cropViewLabel = [[UILabel alloc] init];
+        _cropViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        _cropViewLabel.backgroundColor = [UIColor clearColor];
+        _cropViewLabel.text = @"Mobile View";
+        if(_cropViewLabelText) {
+            _cropViewLabel.text = _cropViewLabelText;
+        }
+        _cropViewLabel.textColor = [UIColor whiteColor];
+        if(_cropViewLabelColor) {
+            _cropViewLabel.textColor = _cropViewLabelColor;
+        }
+        if(_cropViewLabelFont) {
+            _cropViewLabel.font = _cropViewLabelFont;
+        }
+
+        _cropViewLabel.opaque = NO;
+    }
+    return _cropViewLabel;
+}
+
+- (UILabel *)supplementalViewLabel
+{
+    if (!_supplementalViewLabel) {
+        _supplementalViewLabel = [[UILabel alloc] init];
+        _supplementalViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        _supplementalViewLabel.backgroundColor = [UIColor clearColor];
+        _supplementalViewLabel.text = @"Desktop View";
+        if(_supplementalViewLabelText) {
+            _supplementalViewLabel.text = _supplementalViewLabelText;
+        }
+        _supplementalViewLabel.textColor = [UIColor whiteColor];
+        if(_supplementalViewLabelColor) {
+            _supplementalViewLabel.textColor = _supplementalViewLabelColor;
+        }
+        if(_supplementalViewLabelFont) {
+            _supplementalViewLabel.font = _supplementalViewLabelFont;
+        }
+
+        _supplementalViewLabel.opaque = NO;
+    }
+    return _supplementalViewLabel;
 }
 
 - (UIButton *)cancelButton
