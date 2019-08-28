@@ -161,8 +161,11 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     [self.view addSubview:self.supplementalView];
     [self.view addSubview:self.guidelineView];
     if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewRect:)]) {
-        [self.view addSubview:self.supplementalGuidelineView];
-        [self.view addSubview:self.supplementalViewLabel];
+        CGRect supplementalGuidelineRect = [self.dataSource imageCropViewControllerSupplementalViewRect:self];
+        if(supplementalGuidelineRect.size.height != CGRectZero.size.height) {
+            [self.view addSubview:self.supplementalGuidelineView];
+            [self.view addSubview:self.supplementalViewLabel];
+        }
     }
     [self.view addSubview:self.titleLabel];
     [self.view addSubview:self.subtitleLabel];
@@ -294,16 +297,18 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         // ---------------------------
 
         if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewRect:)]) {
-            self.supplementalGuidelineView.translatesAutoresizingMaskIntoConstraints = NO;
             CGRect supplementalGuidelineRect = [self.dataSource imageCropViewControllerSupplementalViewRect:self];
-            NSLayoutConstraint *supplementalGuidelineViewHeightConstraint = [self.supplementalGuidelineView.heightAnchor constraintEqualToConstant:supplementalGuidelineRect.size.height];
-            [supplementalGuidelineViewHeightConstraint setActive:YES];
-            NSLayoutConstraint *supplementalGuidelineViewWidthConstraint = [self.supplementalGuidelineView.widthAnchor constraintEqualToConstant:supplementalGuidelineRect.size.width];
-            [supplementalGuidelineViewWidthConstraint setActive:YES];
-            NSLayoutConstraint *supplementalGuidelineXConstraint = [self.supplementalGuidelineView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor];
-            [supplementalGuidelineXConstraint setActive:YES];
-            NSLayoutConstraint *supplementalGuidelineYConstraint = [self.supplementalGuidelineView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor];
-            [supplementalGuidelineYConstraint setActive:YES];
+            if(supplementalGuidelineRect.size.height != CGRectZero.size.height) {
+                self.supplementalGuidelineView.translatesAutoresizingMaskIntoConstraints = NO;
+                NSLayoutConstraint *supplementalGuidelineViewHeightConstraint = [self.supplementalGuidelineView.heightAnchor constraintEqualToConstant:supplementalGuidelineRect.size.height];
+                [supplementalGuidelineViewHeightConstraint setActive:YES];
+                NSLayoutConstraint *supplementalGuidelineViewWidthConstraint = [self.supplementalGuidelineView.widthAnchor constraintEqualToConstant:supplementalGuidelineRect.size.width];
+                [supplementalGuidelineViewWidthConstraint setActive:YES];
+                NSLayoutConstraint *supplementalGuidelineXConstraint = [self.supplementalGuidelineView.centerXAnchor constraintEqualToAnchor:self.view.centerXAnchor];
+                [supplementalGuidelineXConstraint setActive:YES];
+                NSLayoutConstraint *supplementalGuidelineYConstraint = [self.supplementalGuidelineView.centerYAnchor constraintEqualToAnchor:self.view.centerYAnchor];
+                [supplementalGuidelineYConstraint setActive:YES];
+            }
         }
 
         // ---------------------------
@@ -321,11 +326,14 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         // ---------------------------
 
         if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewRect:)]) {
-            self.supplementalViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
-            NSLayoutConstraint *supplementalViewLabelBottomConstraintToSupplementalGuidelineView = [self.supplementalViewLabel.bottomAnchor constraintEqualToAnchor:self.supplementalGuidelineView.topAnchor constant:0];
-            [supplementalViewLabelBottomConstraintToSupplementalGuidelineView setActive:YES];
-            NSLayoutConstraint *supplementalViewLabelLeadingConstraintToSupplementalGuidelineView = [self.supplementalViewLabel.leadingAnchor constraintEqualToAnchor:self.supplementalGuidelineView.leadingAnchor constant:6];
-            [supplementalViewLabelLeadingConstraintToSupplementalGuidelineView setActive:YES];
+            CGRect supplementalGuidelineRect = [self.dataSource imageCropViewControllerSupplementalViewRect:self];
+            if(supplementalGuidelineRect.size.height != CGRectZero.size.height) {
+                self.supplementalViewLabel.translatesAutoresizingMaskIntoConstraints = NO;
+                NSLayoutConstraint *supplementalViewLabelBottomConstraintToSupplementalGuidelineView = [self.supplementalViewLabel.bottomAnchor constraintEqualToAnchor:self.supplementalGuidelineView.topAnchor constant:0];
+                [supplementalViewLabelBottomConstraintToSupplementalGuidelineView setActive:YES];
+                NSLayoutConstraint *supplementalViewLabelLeadingConstraintToSupplementalGuidelineView = [self.supplementalViewLabel.leadingAnchor constraintEqualToAnchor:self.supplementalGuidelineView.leadingAnchor constant:6];
+                [supplementalViewLabelLeadingConstraintToSupplementalGuidelineView setActive:YES];
+            }
         }
         
         // --------------------
@@ -810,13 +818,14 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 
         self.maskLayer.path = [clipPath CGPath];
 
-
         if ([self.dataSource respondsToSelector:@selector(imageCropViewControllerSupplementalViewMaskPath:)]) {
-            UIBezierPath *supplementalMaskPath = [self.dataSource imageCropViewControllerSupplementalViewMaskPath:self];
-            UIBezierPath *supplementalClipPath = [UIBezierPath bezierPathWithRect:self.rectForClipPath];
-            [supplementalClipPath appendPath:supplementalMaskPath];
-            supplementalClipPath.usesEvenOddFillRule = YES;
-            self.supplementalMaskLayer.path = [supplementalClipPath CGPath];
+            if ([self.dataSource imageCropViewControllerSupplementalViewMaskPath:self] != nil) {
+                UIBezierPath *supplementalMaskPath = [self.dataSource imageCropViewControllerSupplementalViewMaskPath:self];
+                UIBezierPath *supplementalClipPath = [UIBezierPath bezierPathWithRect:self.rectForClipPath];
+                [supplementalClipPath appendPath:supplementalMaskPath];
+                supplementalClipPath.usesEvenOddFillRule = YES;
+                self.supplementalMaskLayer.path = [supplementalClipPath CGPath];
+            }
         }
     }
 }

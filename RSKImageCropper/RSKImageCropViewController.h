@@ -367,7 +367,7 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
 /**
  Asks the data source for a custom rect for an optional supplemental view that has no influence on cropping.
 
- @param controller The crop view controller object to whom a rect is provided.
+ @param controller The crop view controller object to whom a rect is provided. Returning CGRectZero will have the same effect of failing to implement this optional method.
 
  @return A custom rect for the supplementalView.
  */
@@ -384,15 +384,14 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  */
 - (CGRect)imageCropViewControllerCustomMovementRect:(RSKImageCropViewController *)controller;
 
-
 /**
  Asks the data source for a path for an optional supplemental view mask.
 
- @param controller The crop view controller object to whom a path is provided.
+ @param controller The crop view controller object to whom a path is provided. Returning nil will have the same effect of failing to implement this optional method.
 
  @return A custom path for the mask.
  */
-- (UIBezierPath *)imageCropViewControllerSupplementalViewMaskPath:(RSKImageCropViewController *)controller;
+- (nullable UIBezierPath *)imageCropViewControllerSupplementalViewMaskPath:(RSKImageCropViewController *)controller;
 
 @end
 
