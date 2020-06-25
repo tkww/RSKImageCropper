@@ -50,7 +50,6 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 @property (strong, nonatomic) CAShapeLayer *maskLayer;
 @property (strong, nonatomic) CAShapeLayer *supplementalMaskLayer;
 
-
 @property (assign, nonatomic) CGRect maskRect;
 @property (copy, nonatomic) UIBezierPath *maskPath;
 
@@ -90,6 +89,7 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
         _applyMaskToCroppedImage = NO;
         _maskLayerLineWidth = 1.0;
         _rotationEnabled = NO;
+        _guidelineViewHidden = NO;
         _cropMode = RSKImageCropModeCircle;
         
         _portraitCircleMaskRectInnerEdgeInset = 15.0f;
@@ -155,7 +155,9 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
     
     self.view.backgroundColor = [UIColor blackColor];
     self.view.clipsToBounds = YES;
-    
+
+    [self.guidelineView setHidden:_guidelineViewHidden];
+
     [self.view addSubview:self.imageScrollView];
     [self.view addSubview:self.overlayView];
     [self.view addSubview:self.supplementalView];
@@ -851,6 +853,12 @@ static const CGFloat kLayoutImageScrollViewAnimationDuration = 0.25;
 - (void)setZoomScale:(CGFloat)zoomScale
 {
     self.imageScrollView.zoomScale = zoomScale;
+}
+- (void)setGuidelineViewStatus:(BOOL)guidelineViewHidden
+{
+    if (_guidelineViewHidden != guidelineViewHidden) {
+        _guidelineViewHidden = guidelineViewHidden;
+    }
 }
 
 #pragma mark - Action handling

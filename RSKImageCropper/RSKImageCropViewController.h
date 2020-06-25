@@ -179,6 +179,11 @@ typedef NS_ENUM(NSUInteger, RSKImageCropMode) {
  @discussion To support the rotation when `cropMode` is `RSKImageCropModeCustom` you must implement the data source method `imageCropViewControllerCustomMovementRect:`.
  */
 @property (assign, getter=isRotationEnabled, nonatomic) BOOL rotationEnabled;
+/**
+A Boolean value that determines whether the need to hide/show guideline View. Default value is `NO`.
+*/
+@property (assign, getter=isGuidelineViewHidden, nonatomic) BOOL guidelineViewHidden;
+
 
 /// -------------------------------
 /// @name Accessing the UI Elements
