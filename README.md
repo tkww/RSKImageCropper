@@ -1,4 +1,4 @@
-## RSKImageCropper [![Build Status](https://travis-ci.org/ruslanskorb/RSKImageCropper.svg)](https://travis-ci.org/ruslanskorb/RSKImageCropper) [![CocoaPods](https://img.shields.io/cocoapods/dt/RSKImageCropper.svg?maxAge=3600)](https://cocoapods.org/pods/RSKImageCropper) [![Coverage Status](https://coveralls.io/repos/ruslanskorb/RSKImageCropper/badge.svg)](https://coveralls.io/r/ruslanskorb/RSKImageCropper) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/ruslanskorb/RSKImageCropper)
+## RSKImageCropper [![Build Status](https://travis-ci.org/ruslanskorb/RSKImageCropper.svg)](https://travis-ci.org/ruslanskorb/RSKImageCropper) [![Coverage Status](https://coveralls.io/repos/ruslanskorb/RSKImageCropper/badge.svg)](https://coveralls.io/r/ruslanskorb/RSKImageCropper) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/ruslanskorb/RSKImageCropper)
 
 <p align="center">
 	<img src="Screenshot.png" alt="Sample">
@@ -7,7 +7,13 @@
 An image cropper for iOS like in the Contacts app with support for landscape orientation.
 
 ## Installation
-*RSKImageCropper requires iOS 6.0 or later.*
+*RSKImageCropper requires iOS 9.0 or later.*
+
+### Using [Swift Package Manager](https://swift.org/package-manager/)
+
+1. To add the `RSKImageCropper` package to your Xcode project, select File > Swift Packages > Add Package Dependency and enter the repository URL. 
+    
+        https://github.com/ruslanskorb/RSKImageCropper.git
 
 ### Using [CocoaPods](http://cocoapods.org)
 
